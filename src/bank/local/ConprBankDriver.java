@@ -61,11 +61,11 @@ class ConprBank implements Bank {
 
 	@Override
 	public boolean closeAccount(String number) {
-		final ConprAccount a = accounts.get(number);
-		if (a != null) {
-			if (a.getBalance() != 0)
+		final ConprAccount account = accounts.get(number);
+		if (account != null && account.isActive()) {
+			if (account.getBalance() != 0)
 				return false;
-			a.passivate();
+			account.passivate();
 			return true;
 		}
 		return false;
