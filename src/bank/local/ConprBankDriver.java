@@ -87,6 +87,8 @@ class ConprBank implements Bank {
 class ConprAccount implements bank.Account {
 	private static int id = 0;
 
+	private Object moneyActionLock = new Object();
+
 	private final String number;
 	private final String owner;
 	private double balance;
@@ -127,7 +129,9 @@ class ConprAccount implements bank.Account {
 			throw new InactiveException("account not active");
 		if (amount < 0)
 			throw new IllegalArgumentException("negative amount");
-		balance += amount;
+		synchronized (moneyActionLock) {
+			balance += amount;
+		}
 	}
 
 	@Override
@@ -138,7 +142,9 @@ class ConprAccount implements bank.Account {
 			throw new IllegalArgumentException("negative amount");
 		if (balance - amount < 0)
 			throw new OverdrawException("account cannot be overdrawn");
-		balance -= amount;
+		synchronized (moneyActionLock) {
+			balance -= amount;
+		}
 	}
 
 }
